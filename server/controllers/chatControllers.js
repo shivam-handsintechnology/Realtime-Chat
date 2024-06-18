@@ -18,7 +18,7 @@ export const accessChats = async (req, res) => {
     select: 'name email profilePic',
   });
   if (chatExists.length > 0) {
-    res.status(200).send(chatExists[0]);
+    return res.status(200).send(chatExists[0]);
   } else {
     let data = {
       chatName: 'sender',
@@ -31,14 +31,50 @@ export const accessChats = async (req, res) => {
         'users',
         '-password'
       );
-      res.status(200).json(chat);
+      return res.status(200).json(chat);
     } catch (error) {
-      res.status(500).send(error);
+      return res.status(500).send(error);
+    }
+  }
+};
+export const myChats = async (req, res) => {
+  const userId = req.rootUserId
+  if (!userId) res.send({ message: "Provide User's Id" });
+  let chatExists = await Chat.find({
+    isGroup: false,
+    $and: [
+      { users: { $elemMatch: { $eq: req.rootUserId } } },
+    ],
+  })
+    .populate('users', '-password')
+    .populate('latestMessage');
+  chatExists = await user.populate(chatExists, {
+    path: 'latestMessage.sender',
+    select: 'name email profilePic',
+  });
+  if (chatExists.length > 0) {
+    return res.status(200).send(chatExists[0]);
+  } else {
+    let data = {
+      chatName: 'sender',
+      users: [req.rootUserId],
+      isGroup: false,
+    };
+    try {
+      const newChat = await Chat.create(data);
+      const chat = await Chat.find({ _id: newChat._id }).populate(
+        'users',
+        '-password'
+      );
+      return res.status(200).json(chat);
+    } catch (error) {
+      return res.status(500).send(error);
     }
   }
 };
 export const fetchAllChats = async (req, res) => {
   try {
+
     const chats = await Chat.find({
       users: { $elemMatch: { $eq: req.rootUserId } },
     })
@@ -50,16 +86,16 @@ export const fetchAllChats = async (req, res) => {
       path: 'latestMessage.sender',
       select: 'name email profilePic',
     });
-    res.status(200).json(finalChats);
+    return res.status(200).json(finalChats);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
     console.log(error);
   }
 };
 export const creatGroup = async (req, res) => {
   const { chatName, users } = req.body;
   if (!chatName || !users) {
-    res.status(400).json({ message: 'Please fill the fields' });
+    return res.status(400).json({ message: 'Please fill the fields' });
   }
   const parsedUsers = JSON.parse(users);
   if (parsedUsers.length < 2)
@@ -75,7 +111,7 @@ export const creatGroup = async (req, res) => {
     const createdChat = await Chat.findOne({ _id: chat._id })
       .populate('users', '-password')
       .populate('groupAdmin', '-password');
-    // res.status(200).json(createdChat);
+    //return res.status(200).json(createdChat);
     res.send(createdChat);
   } catch (error) {
     res.sendStatus(500);
@@ -84,17 +120,17 @@ export const creatGroup = async (req, res) => {
 export const renameGroup = async (req, res) => {
   const { chatId, chatName } = req.body;
   if (!chatId || !chatName)
-    res.status(400).send('Provide Chat id and Chat name');
+    return res.status(400).send('Provide Chat id and Chat name');
   try {
     const chat = await Chat.findByIdAndUpdate(chatId, {
       $set: { chatName },
     })
       .populate('users', '-password')
       .populate('groupAdmin', '-password');
-    if (!chat) res.status(404);
-    res.status(200).send(chat);
+    if (!chat) return res.status(404);
+    return res.status(200).send(chat);
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
     console.log(error);
   }
 };
@@ -107,10 +143,10 @@ export const addToGroup = async (req, res) => {
     })
       .populate('groupAdmin', '-password')
       .populate('users', '-password');
-    if (!chat) res.status(404);
-    res.status(200).send(chat);
+    if (!chat) return res.status(404);
+    return res.status(200).send(chat);
   } else {
-    res.status(409).send('user already exists');
+    return res.status(409).send('user already exists');
   }
 };
 export const removeFromGroup = async (req, res) => {
@@ -122,10 +158,10 @@ export const removeFromGroup = async (req, res) => {
     })
       .populate('groupAdmin', '-password')
       .populate('users', '-password')
-      .then((e) => res.status(200).send(e))
-      .catch((e) => res.status(404));
+      .then((e) => { return res.status(200).send(e) })
+      .catch((e) => { return res.status(404) });
   } else {
-    res.status(409).send('user doesnt exists');
+    return res.status(409).send('user doesnt exists');
   }
 };
-export const removeContact = async (req, res) => {};
+export const removeContact = async (req, res) => { };

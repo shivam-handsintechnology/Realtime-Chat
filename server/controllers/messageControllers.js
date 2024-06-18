@@ -20,10 +20,10 @@ export const sendMessage = async (req, res) => {
     await Chat.findByIdAndUpdate(chatId, {
       latestMessage: msg,
     });
-    res.status(200).send(msg);
+    return res.status(200).send(msg);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 export const getMessages = async (req, res) => {
@@ -40,7 +40,7 @@ export const getMessages = async (req, res) => {
         model: 'Chat',
       });
 
-    res.status(200).json(messages);
+    return res.status(200).json(messages);
   } catch (error) {
     res.sendStatus(500).json({ error: error });
     console.log(error);

@@ -16,6 +16,16 @@ export const acessCreate = async (body) => {
     console.log('error in access create api');
   }
 };
+export const myChatsCreate = async () => {
+  try {
+    const token = localStorage.getItem('userToken');
+    const { data } = await API(token).get('/api/chat/mychat');
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log('error in access create api');
+  }
+};
 export const fetchAllChats = async () => {
   try {
     const token = localStorage.getItem('userToken');
