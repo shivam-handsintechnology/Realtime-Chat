@@ -15,6 +15,11 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    usertype: {
+      type: String,
+      enum: ["user", "admin", "manager"],
+      default: "user"
+    },
     bio: {
       type: String,
       default: 'Available',
