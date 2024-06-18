@@ -15,7 +15,6 @@ import "./home.css"
 import { fetchChats, setNotifications } from '../redux/chatsSlice'
 import { getSender } from '../utils/logics'
 import { setActiveChat } from '../redux/chatsSlice'
-import Group from '../components/Group'
 import Contacts from '../components/Contacts'
 import { Effect } from "react-notification-badge"
 // import NotificationBadge from 'react-notification-badge/lib/components/NotificationBadge';
@@ -50,7 +49,6 @@ function Home() {
   useEffect(() => {
     const isValid = async () => {
       const data = await validUser()
-
       const user = {
         id: data?.user?._id,
         email: data?.user?.email,
@@ -78,7 +76,6 @@ function Home() {
                 <div className='h-[61px] px-4'>
                   <div className='flex'>
                     <a className='flex items-center relative  -top-4 block h-[90px]' href='/'>
-
                       <h3 className='text-[20px] text-[#1f2228] font-body font-extrabold tracking-wider'>Messages</h3>
                     </a>
                   </div>
@@ -131,12 +128,9 @@ function Home() {
                       <input onChange={handleSearch} className='w-[99.5%] bg-[#f6f6f6] text-[#111b21] tracking-wider pl-9 py-[8px] rounded-[9px] outline-0' type="text" name="search" placeholder="Search" />
 
                     </form>
-
                     <div className='absolute top-[36px] left-[27px]'>
                       <BsSearch style={{ color: "#c4c4c5" }} />
                     </div>
-                    <Group />
-
                     <div style={{ display: search ? "" : "none" }} className='h-[100vh] absolute z-10 w-[100%] left-[0px] top-[70px] bg-[#fff] flex flex-col gap-y-3 pt-3 px-4'>
                       <Search searchResults={searchResults} isLoading={isLoading} handleClick={handleClick} search={search} />
 

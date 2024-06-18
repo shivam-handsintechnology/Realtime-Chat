@@ -3,6 +3,7 @@ import SkeletonLoading from '../ui/SkeletonLoading'
 import "../../pages/home.css"
 function Search({ type, isLoading, searchResults, handleClick, search }) {
 
+
   return (
     <div className={`${search ? "scrollbar-hide overflow-y-scroll h-[250px] mb-5 bg-[#fff] flex flex-col gap-y-3 pt-3" : "hidden"}`}>
 
